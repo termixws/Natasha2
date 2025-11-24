@@ -1,79 +1,65 @@
-import { Scissors, User, Calendar } from 'lucide-react';
+import { Sun, Moon, LogOut, User } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
+import { useAuth } from '../contexts/AuthContext';
 
-interface HeaderProps {
-  onNavigate: (section: string) => void;
-  currentSection: string;
-  user: { name: string } | null;
-  onLogout: () => void;
-}
+export default function Header() {
+  const { theme, toggleTheme } = useTheme();
+  const { user, profile, signOut } = useAuth();
 
-export default function Header({ onNavigate, currentSection, user, onLogout }: HeaderProps) {
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
+  };
+
   return (
-    <header className="bg-white shadow-sm sticky top-0 z-50">
+    <header className="border-b" style={{ borderColor: 'var(--border)', backgroundColor: 'var(--bg-primary)' }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <button
-            onClick={() => onNavigate('home')}
-            className="flex items-center gap-2 text-xl font-light tracking-wide text-gray-900 hover:text-gray-600 transition-colors"
-          >
-            <Scissors className="w-6 h-6" />
-            <span>Salon Natasha</span>
-          </button>
+          <div className="flex items-center space-x-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center">
+              <span className="text-white font-semibold text-lg">N</span>
+            </div>
+            <h1 className="text-2xl font-light tracking-tight" style={{ color: 'var(--text-primary)' }}>
+              Natasha Salon
+            </h1>
+          </div>
 
-          <nav className="hidden md:flex items-center gap-8">
-            <button
-              onClick={() => onNavigate('services')}
-              className={`text-sm font-light transition-colors ${
-                currentSection === 'services'
-                  ? 'text-gray-900 border-b-2 border-gray-900'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Services
-            </button>
-            <button
-              onClick={() => onNavigate('masters')}
-              className={`text-sm font-light transition-colors ${
-                currentSection === 'masters'
-                  ? 'text-gray-900 border-b-2 border-gray-900'
-                  : 'text-gray-600 hover:text-gray-900'
-              }`}
-            >
-              Masters
-            </button>
-            {user ? (
-              <>
-                <button
-                  onClick={() => onNavigate('appointments')}
-                  className={`flex items-center gap-2 text-sm font-light transition-colors ${
-                    currentSection === 'appointments'
-                      ? 'text-gray-900 border-b-2 border-gray-900'
-                      : 'text-gray-600 hover:text-gray-900'
-                  }`}
-                >
-                  <Calendar className="w-4 h-4" />
-                  My Appointments
-                </button>
-                <div className="flex items-center gap-3">
-                  <span className="text-sm text-gray-600">{user.name}</span>
-                  <button
-                    onClick={onLogout}
-                    className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                  >
-                    Logout
-                  </button>
+          <div className="flex items-center space-x-4">
+            {user && profile && (
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2 px-3 py-2 rounded-lg" style={{ backgroundColor: 'var(--bg-secondary)' }}>
+                  <User size={18} style={{ color: 'var(--text-secondary)' }} />
+                  <span className="text-sm" style={{ color: 'var(--text-primary)' }}>
+                    {profile.full_name}
+                  </span>
                 </div>
-              </>
-            ) : (
-              <button
-                onClick={() => onNavigate('login')}
-                className="flex items-center gap-2 text-sm font-light text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <User className="w-4 h-4" />
-                Login
-              </button>
+                <button
+                  onClick={handleSignOut}
+                  className="p-2 rounded-lg hover:opacity-80 transition-opacity"
+                  style={{ backgroundColor: 'var(--bg-secondary)' }}
+                  title="Sign out"
+                >
+                  <LogOut size={18} style={{ color: 'var(--text-secondary)' }} />
+                </button>
+              </div>
             )}
-          </nav>
+
+            <button
+              onClick={toggleTheme}
+              className="p-2 rounded-lg hover:opacity-80 transition-opacity"
+              style={{ backgroundColor: 'var(--bg-secondary)' }}
+              aria-label="Toggle theme"
+            >
+              {theme === 'dark' ? (
+                <Sun size={20} style={{ color: 'var(--text-secondary)' }} />
+              ) : (
+                <Moon size={20} style={{ color: 'var(--text-secondary)' }} />
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </header>
