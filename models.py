@@ -1,19 +1,15 @@
 from typing import Optional, List
 from sqlmodel import SQLModel, Field, Relationship
 from datetime import datetime
-from auth import verify_password
+from pydantic import EmailStr
 
 class User(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    name: str
-    email: str
-    phone: str
+    email: EmailStr = Field(index=True, unique=True)
     hashed_password: str
+    name: str
 
     appointments: List["Appointment"] = Relationship(back_populates="user")
-
-    def verify_password(self, password: str) -> bool:
-        return verify_password(password, self.hashed_password)
     
     
 class Master(SQLModel, table=True):

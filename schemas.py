@@ -1,26 +1,31 @@
 from typing import Optional
 from sqlmodel import SQLModel
 from datetime import datetime
+from pydantic import BaseModel, EmailStr
 
-class UserCreate(SQLModel):
-    name: str
-    email: str
-    phone: str
+class UserCreate(BaseModel):
+    email: EmailStr
     password: str
-
-
-class UserRead(SQLModel):
-    id: int
     name: str
-    email: str
-    phone: str
 
+class UserRead(BaseModel):
+    id: int
+    email: EmailStr
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
 
 class UserUpdate(SQLModel):
     name: Optional[str] = None
     email: Optional[str] = None
     phone: Optional[str] = None
     password: Optional[str] = None
+    
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
 
 
 class MasterCreate(SQLModel):
